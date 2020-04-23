@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biz.Morsink.HaskellData", "Biz.Morsink.HaskellData\Biz.Morsink.HaskellData.csproj", "{FEDDD9E3-EF6C-493D-B8DA-B0073283D023}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biz.Morsink.HaskellData.Parser", "Biz.Morsink.HaskellData.Parser\Biz.Morsink.HaskellData.Parser.csproj", "{1769CC8A-6A7D-4640-ACCB-D91BE54806F1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FEDDD9E3-EF6C-493D-B8DA-B0073283D023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEDDD9E3-EF6C-493D-B8DA-B0073283D023}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEDDD9E3-EF6C-493D-B8DA-B0073283D023}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEDDD9E3-EF6C-493D-B8DA-B0073283D023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1769CC8A-6A7D-4640-ACCB-D91BE54806F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1769CC8A-6A7D-4640-ACCB-D91BE54806F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1769CC8A-6A7D-4640-ACCB-D91BE54806F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1769CC8A-6A7D-4640-ACCB-D91BE54806F1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
