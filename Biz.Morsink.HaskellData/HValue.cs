@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
 namespace Biz.Morsink.HaskellData
 {
-    public abstract class HValue
+    public abstract class HValue : IEquatable<HValue>
     {
         internal HValue() { }
 
@@ -18,5 +19,15 @@ namespace Biz.Morsink.HaskellData
         public static implicit operator HValue(ImmutableList<HValue> values) => new HList(values);
 
         public abstract override string ToString();
+        public abstract override bool Equals(object? obj);
+        public abstract override int GetHashCode();
+
+        public bool Equals(HValue other)
+            => Equals((object)other);
+
+        public static bool operator ==(HValue left, HValue right)
+            => left.Equals(right);
+        public static bool operator !=(HValue left, HValue right)
+            => left.Equals(right);
     }
 }

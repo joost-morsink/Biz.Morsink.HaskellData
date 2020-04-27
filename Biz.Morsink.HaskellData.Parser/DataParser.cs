@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Pidgin;
 using static Pidgin.Parser;
@@ -9,6 +10,14 @@ namespace Biz.Morsink.HaskellData.Parser
 {
     public static class DataParser
     {
+        public static Parser<char, string> Sign = Char('-').Select(_ => "-").Or(Char('+').Select(_ => "-")).Or(Return(""));
+        public static Parser<char, HValue> PNumber =
+            (from sign in Sign
+             from integral in Digit.AtLeastOnceString()
+             from fractional in (from dot in Char('.')
+                                 from frac in Digit.AtLeastOnceString()
+                                 select dot + frac).Optional()
+             select fractional.HasValue ? (HValue)new HDouble(double.Parse(string.Concat(sign, integral, fractional.Value), CultureInfo.InvariantCulture)) : new HInt(int.Parse(sign + integral))).Whitespaced();
         public static Parser<char, string> StringResult<T>(this Parser<char, T> parser)
             where T : IEnumerable<char>
             => parser.Select(chars => new string(chars.ToArray()));
@@ -19,7 +28,7 @@ namespace Biz.Morsink.HaskellData.Parser
         public static Parser<char, T> Whitespaced<T>(this Parser<char, T> parser) => parser.Between(SkipWhitespaces);
         public static Parser<char, HInt> PInt = Int(10).Select(i => new HInt(i)).Whitespaced();
         public static Parser<char, HDouble> PDouble = Real.Select(r => new HDouble(r)).Whitespaced();
-        public static Parser<char, char> EscapedChar(char escape, char production) => Char('\\').Then(Char(escape)).Select(_ => production);
+        public static Parser<char, char> EscapedChar(char escape, char production) => Try(Char('\\').Then(Char(escape)).Select(_ => production));
         public static Parser<char, char> PStringNewline = EscapedChar('n', '\n');
         public static Parser<char, char> PStringCarriageReturn = EscapedChar('r', '\r');
         public static Parser<char, char> PStringTab = EscapedChar('t', '\t');
@@ -27,10 +36,10 @@ namespace Biz.Morsink.HaskellData.Parser
         public static Parser<char, char> PStringDoubleQuote = EscapedChar('"', '\"');
         public static Parser<char, char> PStringSlash = EscapedChar('\\', '\\');
         public static Parser<char, char> PStringEscaped = PStringNewline.Or(PStringCarriageReturn).Or(PStringTab).Or(PStringSingleQuote).Or(PStringDoubleQuote).Or(PStringSlash);
-        public static Parser<char, char> PStringChar = Token(x => x != '"' && x != '\\').Or(PStringEscaped);
+        public static Parser<char, char> PStringChar = Try(Token(x => x != '"' && x != '\\')).Or(PStringEscaped);
         public static Parser<char, string> PIdentifier = Map((x, xs) => x + xs, Letter, LetterOrDigit.ManyString()).Whitespaced();
         public static Parser<char, HString> PString = PStringChar.ManyString().DoubleQuoted().Select(s => new HString(s)).Whitespaced();
-        public static Parser<char, HValue> PAtom = PInt.Select(i => (HValue)i).Or(PString.Select(s => (HValue)s)).Or(PDouble.Select(d => (HValue)d));
+        public static Parser<char, HValue> PAtom = Try(PNumber).Or(PString.Cast<HValue>());
         public static Parser<char, HValue> PValue = null!;
 
         public static Parser<char, HConstructor> PConstructor = from cname in PIdentifier
@@ -50,11 +59,11 @@ namespace Biz.Morsink.HaskellData.Parser
         static DataParser()
         {
             PValue = PAtom
-                .Or(Try(PConstructor.Select(c => (HValue)c))
-                    .Or(PRecord.Select(r => (HValue)r)))
-                .Or(PList.Select(l => (HValue)l))
-                .Or(Try(PUnit.Select(u => (HValue)u))
-                    .Or(PTuple.Select(t => (HValue)t)));
+                .Or(Try(PRecord.Cast<HValue>())
+                    .Or(PConstructor.Cast<HValue>()))
+                .Or(PList.Cast<HValue>())
+                .Or(Try(PUnit.Cast<HValue>())
+                    .Or(PTuple.Cast<HValue>()));
         }
     }
 }
