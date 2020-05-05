@@ -5,9 +5,17 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <PackageId>Biz.Morsink.HaskellData.Parser</PackageId>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <Authors>Joost W. Morsink</Authors>
+    <Description>A parser for the types contained in Biz.Morsink.HaskellData</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <NoWarn>$(NoWarn);8600;8601;8602;8603;8604</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <VersionSuffix>a000debug</VersionSuffix>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="1.7.0" />
