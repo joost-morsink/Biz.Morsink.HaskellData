@@ -13,6 +13,12 @@ namespace Biz.Morsink.HaskellData
             Name = name;
             Arguments = arguments.ToImmutableList();
         }
+        public HConstructor(string name, params HValue[] arguments)
+            : this(name, (IEnumerable<HValue>)arguments)
+        { }
+        public HConstructor(string name, HList argument)
+            : this(name, new HValue[] { argument })
+        { }
         public string Name { get; }
         public ImmutableList<HValue> Arguments { get; }
 

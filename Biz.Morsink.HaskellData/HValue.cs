@@ -16,7 +16,7 @@ namespace Biz.Morsink.HaskellData
         public static implicit operator HValue(int value) => new HInt(value);
         public static implicit operator HValue(double value) => new HDouble(value);
         public static implicit operator HValue(HValue[] values) => new HList(values);
-        public static implicit operator HValue(ImmutableList<HValue> values) => new HList(values);
+        public static implicit operator HValue(ImmutableList<HValue> values) => new HList((IEnumerable<HValue>)values);
 
         public abstract override string ToString();
         public abstract override bool Equals(object? obj);

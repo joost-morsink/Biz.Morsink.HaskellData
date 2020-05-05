@@ -13,7 +13,13 @@ namespace Biz.Morsink.HaskellData
             Name = name;
             Mappings = mappings.ToImmutableSortedDictionary(m => m.Name, m => m);
         }
-        
+        public HRecord(string name, params (string, HValue)[] mappings)
+            : this(name, mappings.Select(m => new HMapping(m.Item1, m.Item2)))
+        { }
+        public HRecord(string name, params HMapping[] mappings)
+            : this(name, (IEnumerable<HMapping>) mappings)
+        { }
+
         public string Name { get; }
         public ImmutableSortedDictionary<string,HMapping> Mappings { get; }
         public override string ToString()

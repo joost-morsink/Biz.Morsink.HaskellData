@@ -10,7 +10,8 @@ namespace Biz.Morsink.HaskellData.Parser.Test
     {
         public static void AssertSuccess<S,T>(this Result<S,T> result, Action<T> test)
         {
-            Assert.IsTrue(result.Success);
+            if(!result.Success)
+                Assert.Fail($"Parse was not succesful!\n{result.Error}");
             test(result.Value);
         }
     }

@@ -11,6 +11,12 @@ namespace Biz.Morsink.HaskellData
         {
             Values = values.ToImmutableList();
         }
+        public HTuple(params HValue[] values)
+            : this((IEnumerable<HValue>)values)
+        { }
+        public HTuple(HList value)
+            : this(new HValue[] { value })
+        { }
         public ImmutableList<HValue> Values { get; }
         public override string ToString()
             => $"({string.Join(",", Values)})";

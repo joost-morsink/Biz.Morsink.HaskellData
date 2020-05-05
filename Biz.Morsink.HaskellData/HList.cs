@@ -13,6 +13,12 @@ namespace Biz.Morsink.HaskellData
         {
             Elements = elements.ToImmutableList();
         }
+        public HList(params HValue[] elements)
+            : this((IEnumerable<HValue>)elements)
+        { }
+        public HList(HList argument)
+            : this(new HValue[] { argument })
+        { }
         public ImmutableList<HValue> Elements { get; }
 #pragma warning disable 168
         public bool Equals(HList other)

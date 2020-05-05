@@ -41,10 +41,12 @@ namespace Biz.Morsink.HaskellData.Parser
         public static Parser<char, HString> PString = PStringChar.ManyString().DoubleQuoted().Select(s => new HString(s)).Whitespaced();
         public static Parser<char, HValue> PAtom = Try(PNumber).Or(PString.Cast<HValue>());
         public static Parser<char, HValue> PValue = null!;
+        public static Parser<char, HValue> PSmallValue = null!;
 
         public static Parser<char, HConstructor> PConstructor = from cname in PIdentifier
-                                                                    from args in Rec(() => PValue).Separated(SkipWhitespaces)
+                                                                    from args in Rec(() => PSmallValue).Separated(SkipWhitespaces)
                                                                     select new HConstructor(cname, args);
+        public static Parser<char, HConstructor> PEmptyConstructor = PIdentifier.Select(cname => new HConstructor(cname));
         public static Parser<char, HMapping> PMapping = from id in PIdentifier
                                                         from val in Char('=').Then(Rec(() => PValue))
                                                         select new HMapping(id, val);
@@ -58,12 +60,26 @@ namespace Biz.Morsink.HaskellData.Parser
 
         static DataParser()
         {
-            PValue = PAtom
-                .Or(Try(PRecord.Cast<HValue>())
-                    .Or(PConstructor.Cast<HValue>()))
-                .Or(PList.Cast<HValue>())
-                .Or(Try(PUnit.Cast<HValue>())
-                    .Or(PTuple.Cast<HValue>()));
+            PValue =
+                OneOf(new [] { 
+                    PAtom, 
+                    PRecord.Cast<HValue>(),
+                    PConstructor.Cast<HValue>(), 
+                    PList.Cast<HValue>(), 
+                    PUnit.Cast<HValue>(),
+                    PTuple.Cast<HValue>()
+                }.Select(Try));
+            PSmallValue =
+                OneOf(new[] {
+                    PAtom,
+                    PList.Cast<HValue>(),
+                    PUnit.Cast<HValue>(),
+                    PTuple.Cast<HValue>(),
+                    PEmptyConstructor.Cast<HValue>(),
+                    PRecord.Cast<HValue>().Parenthesized(),
+                    PConstructor.Cast<HValue>().Parenthesized()
+                }.Select(Try));
+
         }
     }
 }
